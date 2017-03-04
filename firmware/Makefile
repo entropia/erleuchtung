@@ -8,7 +8,7 @@ OBJCOPY=$(CROSS_PREFIX)objcopy
 SIZE=$(CROSS_PREFIX)size
 
 CFLAGS = -Wall -Wextra -std=gnu99 -I../libopencm3/include -DSTM32F3 -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -mthumb -fno-common -ffreestanding -Og -g
-LDFLAGS = -lopencm3_stm32f3 -L../libopencm3/lib -mthumb -mcpu=cortex-m4 -nostartfiles -Wl,--gc-sections -flto -T linker.ld -g
+LDFLAGS = -lopencm3_stm32f3 -L../libopencm3/lib -mthumb -mcpu=cortex-m4 -nostartfiles -Wl,--gc-sections -T linker.ld -g
 
 all: firmware.bin
 
