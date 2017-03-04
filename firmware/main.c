@@ -2,6 +2,7 @@
 #include <libopencm3/stm32/flash.h>
 
 #include "systick.h"
+#include "rgb.h"
 
 static void init_clocktree(void)
 {
@@ -37,8 +38,27 @@ static void init_clocktree(void)
 		;
 }
 
+static void init_periphs(void)
+{
+	rcc_periph_clock_enable(RCC_GPIOA);
+	rcc_periph_reset_pulse(RST_GPIOA);
+
+	rcc_periph_clock_enable(RCC_GPIOB);
+	rcc_periph_reset_pulse(RST_GPIOB);
+
+	rcc_periph_clock_enable(RCC_TIM1);
+	rcc_periph_reset_pulse(RST_TIM1);
+
+	rcc_periph_clock_enable(RCC_TIM15);
+	rcc_periph_reset_pulse(RST_TIM15);
+}
+
 void main(void)
 {
 	init_clocktree();
+	init_periphs();
+
 	systick_init();
+
+	rgb_init();
 }

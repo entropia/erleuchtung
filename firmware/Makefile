@@ -1,6 +1,6 @@
 TOPDIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
-OBJ = main.o systick.o
+OBJ = main.o systick.o rgb.o
 
 CROSS_PREFIX ?= arm-none-eabi-
 CC=$(CROSS_PREFIX)gcc
