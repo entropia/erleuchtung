@@ -3,6 +3,7 @@
 
 #include "systick.h"
 #include "rgb.h"
+#include "white.h"
 
 static void init_clocktree(void)
 {
@@ -49,8 +50,8 @@ static void init_periphs(void)
 	rcc_periph_clock_enable(RCC_TIM1);
 	rcc_periph_reset_pulse(RST_TIM1);
 
-	rcc_periph_clock_enable(RCC_TIM15);
-	rcc_periph_reset_pulse(RST_TIM15);
+	rcc_periph_clock_enable(RCC_ADC12);
+	rcc_periph_reset_pulse(RST_ADC12);
 
 	rcc_periph_clock_enable(RCC_HRTIM);
 	rcc_periph_reset_pulse(RST_HRTIM);
@@ -65,4 +66,25 @@ void main(void)
 
 	rgb_init();
 	white_init();
+
+	uint8_t idx = 0;
+	uint8_t val = 0;
+	while (1) {
+		if (val == 255) {
+			idx = (idx + 1) % 3;
+			val = 0;
+		}
+
+		uint16_t out = ((uint32_t)(val * val) * RGB_PWM_MAX) >> 16;
+
+		if (idx == 0)
+			rgb_set_raw(out, 0, 0);
+		if (idx == 1)
+			rgb_set_raw(0, out, 0);
+		if (idx == 2)
+			rgb_set_raw(0, 0, out);
+
+		val++;
+		delay_ms(10);
+	}
 }
