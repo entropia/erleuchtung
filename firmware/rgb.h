@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 #include "constants.h"
+#include "config.h"
 
 #define RGB_PWM_MAX (F_TIM / RGB_PWM_FREQ)
 

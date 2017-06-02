@@ -16,18 +16,18 @@
 void rgb_set_raw(uint16_t r, uint16_t g, uint16_t b)
 {
 	timer_set_oc_value(TIM1, TIM_OC4, r);
-	timer_set_oc_value(TIM1, TIM_OC2N, g);
-	timer_set_oc_value(TIM1, TIM_OC3N, b);
+	timer_set_oc_value(TIM1, TIM_OC2, g);
+	timer_set_oc_value(TIM1, TIM_OC3, b);
 }
 
 void rgb_init(void)
 {
 	timer_set_period(TIM1, RGB_PWM_MAX);
 
-	timer_set_oc_mode(TIM1, TIM_OC2N, TIM_OCM_PWM1);
+	timer_set_oc_mode(TIM1, TIM_OC2, TIM_OCM_PWM1);
 	timer_enable_oc_output(TIM1, TIM_OC2N);
 
-	timer_set_oc_mode(TIM1, TIM_OC3N, TIM_OCM_PWM1);
+	timer_set_oc_mode(TIM1, TIM_OC3, TIM_OCM_PWM1);
 	timer_enable_oc_output(TIM1, TIM_OC3N);
 
 	timer_set_oc_mode(TIM1, TIM_OC4, TIM_OCM_PWM1);
@@ -38,9 +38,12 @@ void rgb_init(void)
 	timer_enable_counter(TIM1);
 
 	gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO11);
-	gpio_set_af(GPIOA, GPIO_AF6, GPIO11);
+	gpio_set_af(GPIOA, GPIO_AF11, GPIO11);
 
 	gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO14 | GPIO15);
 	gpio_set_af(GPIOB, GPIO_AF6, GPIO14);
 	gpio_set_af(GPIOB, GPIO_AF4, GPIO15);
+
+	// this is necessary for advanced timers
+	timer_enable_break_main_output(TIM1);
 }
