@@ -51,6 +51,9 @@ static void init_periphs(void)
 
 	rcc_periph_clock_enable(RCC_TIM15);
 	rcc_periph_reset_pulse(RST_TIM15);
+
+	rcc_periph_clock_enable(RCC_HRTIM);
+	rcc_periph_reset_pulse(RST_HRTIM);
 }
 
 void main(void)
@@ -61,4 +64,5 @@ void main(void)
 	systick_init();
 
 	rgb_init();
+	white_init();
 }
