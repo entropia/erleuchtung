@@ -15,7 +15,7 @@ static void init_clocktree(void)
 	FLASH_ACR |= FLASH_ACR_LATENCY_2WS;
 
 	// init HSE
-	RCC_CR |= RCC_CR_HSEBYP; // HACK: discovery has no quartz
+	//RCC_CR |= RCC_CR_HSEBYP; // HACK: discovery has no quartz
 	RCC_CR |= RCC_CR_HSEON;
 	while (!(RCC_CR & RCC_CR_HSERDY))
 		;
