@@ -1,5 +1,6 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/flash.h>
+#include <libopencmsis/core_cm3.h>
 
 #include "systick.h"
 #include "rgb.h"
@@ -59,6 +60,8 @@ static void init_periphs(void)
 
 void main(void)
 {
+	SCB_VTOR = 0x8000800;
+
 	init_clocktree();
 	init_periphs();
 
