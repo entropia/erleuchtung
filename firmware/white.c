@@ -26,7 +26,7 @@
  *  - Fault: PA15 / HRTIM_FLT2
  */
 
-#define HRTIM_PERIOD (F_HRTIM_DLL / HRTIM_PWM_FRQ)
+#define HRTIM_PERIOD (F_HRTIM_DLL / HRTIM_PWM_FREQ)
 
 static void hrtim_calibrate(void)
 {
