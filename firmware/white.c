@@ -68,7 +68,7 @@ static void setup_timer_common(uint8_t tim)
 		HRTIM_TIMx_CR_CONT |
 		HRTIM_TIMx_CR_TxREPU;
 
-	HRTIM_TIMx_OUT(tim) = HRTIM_TIMx_OUT_FAULT1_INACTIVE;
+	//HRTIM_TIMx_OUT(tim) = HRTIM_TIMx_OUT_FAULT1_INACTIVE;
 
 	HRTIM_TIMx_SET1(tim) = HRTIM_TIMx_SETy_PER;
 	HRTIM_TIMx_RST1(tim) = HRTIM_TIMx_RSTy_CMP1;
@@ -86,8 +86,8 @@ static void init_hrtim(void)
 	setup_timer_common(HRTIM_TIMA);
 	setup_timer_common(HRTIM_TIMC);
 
-	HRTIM_TIMx_FLT(HRTIM_TIMA) = HRTIM_TIMx_FLT_FLT1EN;
-	HRTIM_TIMx_FLT(HRTIM_TIMC) = HRTIM_TIMx_FLT_FLT2EN;
+	//HRTIM_TIMx_FLT(HRTIM_TIMA) = HRTIM_TIMx_FLT_FLT1EN;
+	//HRTIM_TIMx_FLT(HRTIM_TIMC) = HRTIM_TIMx_FLT_FLT2EN;
 
 	set_hrtim_channel(0, 110);
 	set_hrtim_channel(1, 100);
@@ -135,8 +135,8 @@ void white_init(void)
 	 * now.
 	 */
 
-	HRTIM_FLTINR1 = HRTIM_FLTINR1_FLTxP(1) | HRTIM_FLTINR1_FLTxP(2);
-	HRTIM_FLTINR1 |= HRTIM_FLTINR1_FLTxE(1) | HRTIM_FLTINR1_FLTxE(2);
+	//HRTIM_FLTINR1 = HRTIM_FLTINR1_FLTxP(1) | HRTIM_FLTINR1_FLTxP(2);
+	//HRTIM_FLTINR1 |= HRTIM_FLTINR1_FLTxE(1) | HRTIM_FLTINR1_FLTxE(2);
 
 	init_adc();
 }
