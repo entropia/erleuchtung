@@ -89,8 +89,8 @@ static void init_hrtim(void)
 	//HRTIM_TIMx_FLT(HRTIM_TIMA) = HRTIM_TIMx_FLT_FLT1EN;
 	//HRTIM_TIMx_FLT(HRTIM_TIMC) = HRTIM_TIMx_FLT_FLT2EN;
 
-	set_hrtim_channel(0, 110);
-	set_hrtim_channel(1, 100);
+	set_hrtim_channel(0, 0);
+	set_hrtim_channel(1, 0);
 	HRTIM_CR2 |= HRTIM_CR2_TASWU | HRTIM_CR2_TCSWU;
 
 	HRTIM_MCR |= HRTIM_MCR_TACEN | HRTIM_MCR_TCCEN;
