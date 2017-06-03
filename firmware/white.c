@@ -65,7 +65,8 @@ static void setup_timer_common(uint8_t tim)
 {
 	HRTIM_TIMx_TIMCR(tim) =
 		HRTIM_TIMx_CR_PREEN |
-		HRTIM_TIMx_CR_CONT;
+		HRTIM_TIMx_CR_CONT |
+		HRTIM_TIMx_CR_TxREPU;
 
 	HRTIM_TIMx_OUT(tim) = HRTIM_TIMx_OUT_FAULT1_INACTIVE;
 
