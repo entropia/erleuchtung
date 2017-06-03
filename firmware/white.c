@@ -43,22 +43,28 @@ static void hrtim_calibrate(void)
 
 static void set_hrtim_channel(uint8_t ch, uint16_t val)
 {
+	uint16_t setval = val;
+
 	/*
 	 * When we have simultaneous sets and resets, resets win, thus we clamp
 	 * the reset point below the set point (= HRTIM_PERIOD) to avoid a
 	 * large value resulting in no output
 	 */
 	if (val >= HRTIM_PERIOD)
-		val = HRTIM_PERIOD - 1;
+		setval = HRTIM_PERIOD - 1;
 
 	// values below 0x60 are forbidden for CKPSC == 0
 	if (val < 0x60)
-		val = 0x60;
+		setval = 0x60;
+
+	// map zero to HRTIM_PERIOD to achive true disabling
+	if (val == 0)
+		setval = HRTIM_PERIOD;
 
 	if (ch == 0)
-		HRTIM_TIMx_CMP1(HRTIM_TIMA) = val;
+		HRTIM_TIMx_CMP1(HRTIM_TIMA) = setval;
 	else
-		HRTIM_TIMx_CMP1(HRTIM_TIMC) = val;
+		HRTIM_TIMx_CMP1(HRTIM_TIMC) = setval;
 }
 
 static void setup_timer_common(uint8_t tim)
