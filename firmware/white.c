@@ -71,6 +71,8 @@ static void setup_timer_common(uint8_t tim)
 
 	HRTIM_TIMx_SET1(tim) = HRTIM_TIMx_SETy_UPDATE;
 	HRTIM_TIMx_RST1(tim) = HRTIM_TIMx_RSTy_CMP1;
+
+	HRTIM_TIMx_PER(tim) = HRTIM_PERIOD;
 }
 
 static void init_hrtim(void)
