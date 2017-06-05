@@ -100,6 +100,7 @@ static void init_hrtim(void)
 	HRTIM_CR2 |= HRTIM_CR2_TASWU | HRTIM_CR2_TCSWU;
 
 	HRTIM_MCR |= HRTIM_MCR_TACEN | HRTIM_MCR_TCCEN;
+	HRTIM_OENR |= HRTIM_OENR_TA1OEN | HRTIM_OENR_TC1OEN;
 }
 
 static void init_gpio(void)
