@@ -123,7 +123,9 @@ static void init_gpio(void)
 
 static void init_adc(void)
 {
-	
+	adc_enable_regulator(ADC1);
+	adc_enable_regulator(ADC2);
+	delay_ms(1);
 }
 
 void white_init(void)
