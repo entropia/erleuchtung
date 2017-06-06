@@ -57,6 +57,7 @@ static void init_periphs(void)
 	rcc_periph_clock_enable(RCC_HRTIM);
 	rcc_periph_reset_pulse(RST_HRTIM);
 }
+void set_hrtim_channel(uint8_t ch, uint16_t val);
 
 void main(void)
 {
@@ -70,24 +71,24 @@ void main(void)
 	rgb_init();
 	white_init();
 
-	uint8_t idx = 0;
-	uint8_t val = 0;
+
 	while (1) {
-		if (val == 255) {
-			idx = (idx + 1) % 3;
-			val = 0;
-		}
+		rgb_set_raw(RGB_PWM_MAX, 0, 0);
+		set_hrtim_channel(0, 3000);
+		set_hrtim_channel(1, 0);
 
-		uint16_t out = ((uint32_t)(val * val) * RGB_PWM_MAX) >> 16;
+		delay_ms(1000);
 
-		if (idx == 0)
-			rgb_set_raw(out, 0, 0);
-		if (idx == 1)
-			rgb_set_raw(0, out, 0);
-		if (idx == 2)
-			rgb_set_raw(0, 0, out);
+		rgb_set_raw(0, RGB_PWM_MAX, 0);
+		set_hrtim_channel(0, 3000);
+		set_hrtim_channel(1, 3000);
 
-		val++;
-		delay_ms(10);
+		delay_ms(1000);
+
+		rgb_set_raw(0, 0, RGB_PWM_MAX);
+		set_hrtim_channel(0, 0);
+		set_hrtim_channel(1, 3000);
+
+		delay_ms(1000);
 	}
 }

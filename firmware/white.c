@@ -41,8 +41,7 @@ static void hrtim_calibrate(void)
 	               HRTIM_DLLCR_CALEN;
 }
 
-static void set_hrtim_channel(uint8_t ch, uint16_t val)
-{
+void set_hrtim_channel(uint8_t ch, uint16_t val) {
 	uint16_t setval = val;
 
 	/*
