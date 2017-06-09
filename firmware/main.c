@@ -5,6 +5,7 @@
 #include "systick.h"
 #include "rgb.h"
 #include "white.h"
+#include "usart.h"
 
 static void init_clocktree(void)
 {
@@ -56,6 +57,9 @@ static void init_periphs(void)
 
 	rcc_periph_clock_enable(RCC_HRTIM);
 	rcc_periph_reset_pulse(RST_HRTIM);
+
+	rcc_periph_clock_enable(RCC_USART1);
+	rcc_periph_reset_pulse(RST_USART1);
 }
 void set_hrtim_channel(uint8_t ch, uint16_t val);
 
@@ -68,9 +72,11 @@ void main(void)
 
 	systick_init();
 
+	usart_init();
 	rgb_init();
 	white_init();
 
+	usart_puts("Erleuchtung booted\n");
 
 	while (1) {
 		rgb_set_raw(RGB_PWM_MAX, 0, 0);
