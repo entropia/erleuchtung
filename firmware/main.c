@@ -53,6 +53,9 @@ static void init_periphs(void)
 	rcc_periph_clock_enable(RCC_TIM1);
 	rcc_periph_reset_pulse(RST_TIM1);
 
+	rcc_periph_clock_enable(RCC_TIM2);
+	rcc_periph_reset_pulse(RST_TIM2);
+
 	rcc_periph_clock_enable(RCC_ADC12);
 	rcc_periph_reset_pulse(RST_ADC12);
 

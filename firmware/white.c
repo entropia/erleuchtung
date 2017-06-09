@@ -1,11 +1,15 @@
+#include <libopencm3/cm3/nvic.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/adc.h>
+#include <libopencm3/stm32/timer.h>
 #include <libopencm3/stm32/hrtim.h>
 
 #include "white.h"
 #include "constants.h"
+#include "systick.h"
 #include "config.h"
+#include "usart.h"
 
 /*
  * Pin mapping
@@ -27,6 +31,7 @@
  */
 
 #define HRTIM_PERIOD (F_HRTIM_DLL / HRTIM_PWM_FREQ)
+#define ADC_TIMER_PERIOD (F_TIM / ADC_FREQ)
 
 static void hrtim_calibrate(void)
 {
@@ -121,11 +126,63 @@ static void init_gpio(void)
 	gpio_set(GPIOB, GPIO4 | GPIO5);
 }
 
+static void init_one_adc(uint32_t adc)
+{
+	adc_enable_regulator(adc);
+	delay_ms(1);
+
+	ADC_CR(adc) |= ADC_CR_ADCAL;
+	while (ADC_CR(adc) & ADC_CR_ADCAL)
+		;
+}
+
+void adc1_2_isr(void)
+{
+	uint32_t val;
+
+	if (!(ADC1_ISR & ADC_ISR_EOC)) {
+		ADC1_ISR = ADC1_ISR;
+		return;
+	}
+
+	val = *(volatile uint32_t*)(ADC1 + 0x30C);
+	usart_puts("\x1b[H\x1b[2J");
+	//usart_puts("\x1b[H");
+	usart_print_int(val & 0xFFFF);
+	usart_puts("\n");
+}
+
 static void init_adc(void)
 {
-	adc_enable_regulator(ADC1);
-	adc_enable_regulator(ADC2);
+	ADC12_CCR |= ADC_CCR_CKMODE_DIV1;
+
+	init_one_adc(ADC1);
+	init_one_adc(ADC2);
+
+	ADC1_SQR1 = 11 << ADC_SQR1_SQ1_SHIFT |
+	             1 << ADC_SQR1_L_SHIFT;
+	// FIXME: ADC2_IN4 doesn't work?
+	ADC2_SQR1 =  4 << ADC_SQR1_SQ1_SHIFT |
+	             1 << ADC_SQR1_L_SHIFT;
+
+	// Use simultaneous regular dual conversion mode
+	//ADC12_CCR |= 6 << ADC_CCR_DUAL_SHIFT;
+	// Triggered by TIM2_TRGO
+	ADC1_CFGR1 |= ADC_CFGR1_EXTSEL_VAL(11) |
+	              ADC_CFGR1_EXTEN_RISING_EDGE;
+
+	nvic_enable_irq(NVIC_ADC1_2_IRQ);
+	ADC1_IER |= ADC_IER_EOCIE;
+
+	adc_power_on(ADC1);
+	adc_power_on(ADC2);
 	delay_ms(1);
+
+	ADC1_CR |= ADC_CR_ADSTART;
+
+	timer_set_period(TIM2, ADC_TIMER_PERIOD);
+	timer_set_master_mode(TIM2, TIM_CR2_MMS_UPDATE);
+	timer_enable_counter(TIM2);
 }
 
 void white_init(void)
