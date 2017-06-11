@@ -46,3 +46,24 @@ void usart_print_int(uint32_t i)
 
 	usart_puts(p + 1);
 }
+
+void usart_print_hex(uint32_t i)
+{
+	char buf[9];
+	int idx;
+
+	buf[8] = 0;
+
+	for (idx = 7; idx >= 0; idx--) {
+		uint8_t nibble = i & 0xF;
+
+		if (nibble >= 10)
+			buf[idx] = 'A' + nibble - 10;
+		else
+			buf[idx] = '0' + nibble;
+
+		i >>= 4;
+	}
+
+	usart_puts(buf);
+}

@@ -1,5 +1,6 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/flash.h>
+#include <libopencm3/stm32/adc.h>
 #include <libopencmsis/core_cm3.h>
 
 #include "systick.h"
@@ -68,7 +69,6 @@ static void init_periphs(void)
 	rcc_periph_clock_enable(RCC_CAN);
 	rcc_periph_reset_pulse(RST_CAN);
 }
-void set_hrtim_channel(uint8_t ch, uint16_t val);
 
 void main(void)
 {
@@ -86,6 +86,7 @@ void main(void)
 
 	usart_puts("Erleuchtung booted\n");
 
+	/*
 	while (1) {
 		rgb_set_raw(RGB_PWM_MAX, 0, 0);
 		set_hrtim_channel(0, 3000);
@@ -104,5 +105,36 @@ void main(void)
 		set_hrtim_channel(1, 3000);
 
 		delay_ms(1000);
+	}*/
+
+	int i;
+	i=250;
+	while (1) {
+		usart_puts("S1\n");
+	ADC1_CR |= ADC_CR_ADSTART;
+		for (; i <= 4000; i++) {
+			white_set_channel(CHANNEL_WARM, i);
+			delay_ms(1);
+		}
+		usart_puts("S2\n");
+	ADC1_CR |= ADC_CR_ADSTART;
+		for (;i > 250; i--) {
+			white_set_channel(CHANNEL_WARM, i);
+			delay_ms(1);
+		}
+		usart_puts("S3\n");
+	ADC1_CR |= ADC_CR_ADSTART;
+
+		for (; i <= 4000; i++) {
+			white_set_channel(CHANNEL_COLD, i);
+			delay_ms(1);
+		}
+		usart_puts("S4\n");
+	ADC1_CR |= ADC_CR_ADSTART;
+		for (;i > 250; i--) {
+			white_set_channel(CHANNEL_COLD, i);
+			delay_ms(1);
+		}
+
 	}
 }

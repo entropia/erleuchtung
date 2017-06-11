@@ -134,22 +134,48 @@ static void init_one_adc(uint32_t adc)
 	ADC_CR(adc) |= ADC_CR_ADCAL;
 	while (ADC_CR(adc) & ADC_CR_ADCAL)
 		;
+
+	adc_set_sample_time_on_all_channels(adc, ADC_SMPR_SMP_19DOT5CYC);
+	//adc_set_sample_time_on_all_channels(adc, ADC_SMPR_SMP_601DOT5CYC);
 }
+
+uint32_t chanval;
 
 void adc1_2_isr(void)
 {
 	uint32_t val;
 
+	/*
 	if (!(ADC1_ISR & ADC_ISR_EOC)) {
 		ADC1_ISR = ADC1_ISR;
 		return;
 	}
+	*/
 
+	//usart_puts("ADC1_ISR "); usart_print_hex(ADC1_ISR); usart_puts("\n");
+	//usart_puts("ADC2_ISR "); usart_print_hex(ADC2_ISR); usart_puts("\n");
+
+	if (ADC1_ISR & ADC_ISR_EOC) {
+		//ADC1_ISR = ADC_ISR_EOC;
+		val = *(volatile uint32_t*)(ADC1 + 0x40);
+		usart_puts("A");
+		usart_print_int(val);
+		usart_puts("\n");
+	}
+	if (ADC2_ISR & ADC_ISR_EOC) {
+		//ADC2_ISR = ADC_ISR_EOC;
+		val = *(volatile uint32_t*)(ADC2 + 0x40);
+		usart_puts("B");
+		usart_print_int(val);
+		usart_puts("\n");
+	}
+
+	/*
 	val = *(volatile uint32_t*)(ADC1 + 0x30C);
-	usart_puts("\x1b[H\x1b[2J");
-	//usart_puts("\x1b[H");
-	usart_print_int(val & 0xFFFF);
+	usart_puts("C ");
+	usart_print_hex(val);
 	usart_puts("\n");
+	*/
 }
 
 static void init_adc(void)
@@ -161,28 +187,38 @@ static void init_adc(void)
 
 	ADC1_SQR1 = 11 << ADC_SQR1_SQ1_SHIFT |
 	             1 << ADC_SQR1_L_SHIFT;
-	// FIXME: ADC2_IN4 doesn't work?
 	ADC2_SQR1 =  4 << ADC_SQR1_SQ1_SHIFT |
 	             1 << ADC_SQR1_L_SHIFT;
 
 	// Use simultaneous regular dual conversion mode
-	//ADC12_CCR |= 6 << ADC_CCR_DUAL_SHIFT;
+//	ADC12_CCR |= 6 << ADC_CCR_DUAL_SHIFT;
 	// Triggered by TIM2_TRGO
-	ADC1_CFGR1 |= ADC_CFGR1_EXTSEL_VAL(11) |
-	              ADC_CFGR1_EXTEN_RISING_EDGE;
+//	ADC1_CFGR1 |= ADC_CFGR1_EXTSEL_VAL(11) |
+//	              ADC_CFGR1_EXTEN_RISING_EDGE;
 
 	nvic_enable_irq(NVIC_ADC1_2_IRQ);
+
 	ADC1_IER |= ADC_IER_EOCIE;
+	ADC2_IER |= ADC_IER_EOCIE;
 
 	adc_power_on(ADC1);
 	adc_power_on(ADC2);
 	delay_ms(1);
 
-	ADC1_CR |= ADC_CR_ADSTART;
+//	ADC1_CR |= ADC_CR_ADSTART;
 
 	timer_set_period(TIM2, ADC_TIMER_PERIOD);
 	timer_set_master_mode(TIM2, TIM_CR2_MMS_UPDATE);
 	timer_enable_counter(TIM2);
+}
+
+void white_set_channel(enum white_channel channel, uint16_t val)
+{
+	// below 250 raw, the gate driver gets bouncy
+	if (val <= 250)
+		val = 250;
+
+	set_hrtim_channel(channel, val);
 }
 
 void white_init(void)

@@ -5,7 +5,8 @@
 
 #define RGB_PWM_FREQ 8000
 #define HRTIM_PWM_FREQ 281250
-#define ADC_FREQ 1000
+//#define ADC_FREQ 1000
+#define ADC_FREQ 2
 
 #define CFG_KEY_ADDR 0xff00
 
