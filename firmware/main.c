@@ -6,6 +6,7 @@
 #include "rgb.h"
 #include "white.h"
 #include "usart.h"
+#include "can.h"
 
 static void init_clocktree(void)
 {
@@ -60,6 +61,9 @@ static void init_periphs(void)
 
 	rcc_periph_clock_enable(RCC_USART1);
 	rcc_periph_reset_pulse(RST_USART1);
+
+	rcc_periph_clock_enable(RCC_CAN);
+	rcc_periph_reset_pulse(RST_CAN);
 }
 void set_hrtim_channel(uint8_t ch, uint16_t val);
 
@@ -75,6 +79,7 @@ void main(void)
 	usart_init();
 	rgb_init();
 	white_init();
+	can_if_init();
 
 	usart_puts("Erleuchtung booted\n");
 
