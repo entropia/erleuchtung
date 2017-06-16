@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include <libopencm3/cm3/scb.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/can.h>
 
@@ -42,6 +43,9 @@ void can_if_init(void)
 
 	// BPR = 18 -> Tq = 500 ns at 36MHz
 	CAN_BTR(BX_CAN_BASE) = CAN_BTR_SJW_2TQ | CAN_BTR_TS1_9TQ | CAN_BTR_TS2_6TQ | 17;
+
+	// enable reception interrupt
+	CAN_IER(BX_CAN_BASE) |= CAN_IER_FMPIE0;
 
 	// set receive filters
 	CAN_FMR(BX_CAN_BASE) |= CAN_FMR_FINIT;
@@ -89,4 +93,14 @@ void can_recv(struct can_msg *msg)
 	CAN_RF0R(BX_CAN_BASE) |= CAN_RF0R_RFOM0;
 	while (CAN_RF0R(BX_CAN_BASE) & CAN_RF0R_RFOM0)
 		;
+}
+
+void usb_lp_can1_rx0_isr(void)
+{
+	struct can_msg msg;
+
+	can_recv(&msg);
+
+	if (msg.len > 0 && msg.data[0] == 0x42)
+		scb_reset_system();
 }
