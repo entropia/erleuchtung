@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/can.h>
 
@@ -72,5 +74,19 @@ void can_if_init(void)
 
 void can_recv(struct can_msg *msg)
 {
+	uint32_t h, l;
+	while (!(CAN_RF0R(BX_CAN_BASE) & CAN_RF0R_FMP0_MASK))
+		;
 
+	msg->len = CAN_RDT0R(BX_CAN_BASE) & CAN_RDTxR_DLC_MASK;
+	msg->id = CAN_RI0R(BX_CAN_BASE) >> 3;
+
+	h = CAN_RDH0R(BX_CAN_BASE);
+	l = CAN_RDL0R(BX_CAN_BASE);
+	memcpy(&msg->data[0], &l, 4);
+	memcpy(&msg->data[4], &h, 4);
+
+	CAN_RF0R(BX_CAN_BASE) |= CAN_RF0R_RFOM0;
+	while (CAN_RF0R(BX_CAN_BASE) & CAN_RF0R_RFOM0)
+		;
 }
