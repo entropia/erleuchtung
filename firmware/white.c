@@ -186,9 +186,9 @@ static void init_adc(void)
 	init_one_adc(ADC2);
 
 	ADC1_SQR1 = 11 << ADC_SQR1_SQ1_SHIFT |
-	             1 << ADC_SQR1_L_SHIFT;
+	             0 << ADC_SQR1_L_SHIFT;
 	ADC2_SQR1 =  4 << ADC_SQR1_SQ1_SHIFT |
-	             1 << ADC_SQR1_L_SHIFT;
+	             0 << ADC_SQR1_L_SHIFT;
 
 	// Use simultaneous regular dual conversion mode
 //	ADC12_CCR |= 6 << ADC_CCR_DUAL_SHIFT;
