@@ -1,6 +1,7 @@
 #include <string.h>
 
 #include <libopencm3/cm3/scb.h>
+#include <libopencm3/cm3/nvic.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/can.h>
 
@@ -46,6 +47,7 @@ void can_if_init(void)
 
 	// enable reception interrupt
 	CAN_IER(BX_CAN_BASE) |= CAN_IER_FMPIE0;
+	nvic_enable_irq(NVIC_USB_LP_CAN1_RX0_IRQ);
 
 	// set receive filters
 	CAN_FMR(BX_CAN_BASE) |= CAN_FMR_FINIT;
