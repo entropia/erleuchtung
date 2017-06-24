@@ -15,14 +15,14 @@
  * Pin mapping
  * -----------
  *
- * Channel 0:
+ * Channel 0 (Warm):
  *  - SW: PA8 / HRTIM_CHA1
  *  - PWM: PB4 / TIM3_CH1
  *  - Isense: PA7 / ADC2_IN4
  *  - Vsense: PB1 / ADC1_IN12
  *  - Fault: PA12 / HRTIM_FLT1
  *
- * Channel 1:
+ * Channel 1 (Cold):
  *  - SW: PB12 / HRTIM1_CHC1
  *  - PWM: PB5 / TIM3_CH2
  *  - Isense: PB0 / ADC1_IN11
