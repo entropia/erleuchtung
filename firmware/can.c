@@ -7,6 +7,7 @@
 
 #include "can.h"
 #include "config.h"
+#include "systick.h"
 
 /*
   Identifier format:
@@ -26,6 +27,8 @@
    Only extended identfiers are used.
    The all-ones destination is a broadcast.
 */
+
+#define CAN_TX_TIMEOUT 1000
 
 // avoid collision with libopencm3
 void can_if_init(void)
@@ -95,6 +98,35 @@ void can_recv(struct can_msg *msg)
 	CAN_RF0R(BX_CAN_BASE) |= CAN_RF0R_RFOM0;
 	while (CAN_RF0R(BX_CAN_BASE) & CAN_RF0R_RFOM0)
 		;
+}
+
+int can_send(struct can_msg *msg)
+{
+	uint32_t timeout = ticks + CAN_TX_TIMEOUT * HZ;
+	uint32_t h, l;
+
+	memcpy(&l, &msg->data[0], 4);
+	memcpy(&h, &msg->data[4], 4);
+
+	CAN_TDT0R(BX_CAN_BASE) &= ~CAN_TDTxR_DLC_MASK;
+	CAN_TDT0R(BX_CAN_BASE) |= msg->len;
+	CAN_TDH0R(BX_CAN_BASE) = h;
+	CAN_TDL0R(BX_CAN_BASE) = l;
+	CAN_TI0R(BX_CAN_BASE) = (msg->id << 3) | CAN_TIxR_IDE;
+
+	CAN_TI0R(BX_CAN_BASE) |= CAN_TIxR_TXRQ;
+
+	while (CAN_TI0R(BX_CAN_BASE) & CAN_TIxR_TXRQ) {
+		if (time_after(ticks, timeout)) {
+			CAN_TSR(BX_CAN_BASE) |= CAN_TSR_ABRQ0;
+			while (CAN_TSR(BX_CAN_BASE) & CAN_TSR_ABRQ0)
+				;
+
+			return -1;
+		}
+	}
+
+	return 0;
 }
 
 void usb_lp_can1_rx0_isr(void)

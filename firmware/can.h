@@ -10,3 +10,4 @@ struct can_msg {
 
 void can_if_init(void);
 void can_recv(struct can_msg *msg);
+int can_send(struct can_msg *msg);
